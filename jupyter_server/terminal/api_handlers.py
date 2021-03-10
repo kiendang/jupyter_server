@@ -1,5 +1,8 @@
 import json
 from tornado import web
+
+from jupyter_server.utils import eventlogging_schema_fqn
+
 from ..base.handlers import APIHandler
 from ..prometheus.metrics import TERMINAL_CURRENTLY_RUNNING_TOTAL
 
@@ -24,6 +27,11 @@ class TerminalRootHandler(APIHandler):
         data = self.get_json_body() or {}
 
         name, _ = self.terminal_manager.new_named_terminal(**data)
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('terminal-actions'),
+            1,
+            { 'action': 'start', 'id': name }
+        )
         self.finish(json.dumps({'name': name}))
 
         # Increase the metric by one because a new terminal was created
@@ -37,6 +45,11 @@ class TerminalHandler(APIHandler):
     def get(self, name):
         tm = self.terminal_manager
         if name in tm.terminals:
+            self.eventlog.record_event(
+                eventlogging_schema_fqn('terminal-actions'),
+                1,
+                { 'action': 'get', 'id': name }
+            )
             self.finish(json.dumps({'name': name}))
         else:
             raise web.HTTPError(404, "Terminal not found: %r" % name)
@@ -47,6 +60,11 @@ class TerminalHandler(APIHandler):
         if name in tm.terminals:
             await tm.terminate(name, force=True)
             self.set_status(204)
+            self.eventlog.record_event(
+                eventlogging_schema_fqn('terminal-actions'),
+                1,
+                { 'action': 'stop', 'id': name }
+            )
             self.finish()
 
             # Decrease the metric below by one
