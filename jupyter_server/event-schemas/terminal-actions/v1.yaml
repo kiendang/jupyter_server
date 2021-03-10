@@ -3,7 +3,7 @@ version: 1
 title: Terminal activities
 personal-data: true
 description: |
-  Record actions on files via the Terminal REST API.
+  Record actions on terminals via the Terminal REST API.
 
   Limitations:
 
@@ -34,7 +34,7 @@ properties:
       2. start
          Start a terminal session.
 
-      5. kill
+      3. kill
          Shutdown a terminal session.
   id:
     category: personally-identifiable-information

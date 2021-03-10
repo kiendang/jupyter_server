@@ -3,7 +3,7 @@ version: 1
 title: Kernel activities
 personal-data: true
 description: |
-  Record actions on files via the Kernel REST API.
+  Record actions on kernels via the Kernel REST API.
 
   Limitations:
 

@@ -35,7 +35,7 @@ properties:
       2. restore
          Restore the file to a specific checkpoint.
 
-      5. delete
+      3. delete
          Delete a specific checkpoint of a file.
   path:
     category: personally-identifiable-information
