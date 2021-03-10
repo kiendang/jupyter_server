@@ -1,0 +1,53 @@
+"$id": eventlogging.jupyter.org/jupyter_server/kernel-actions
+version: 1
+title: Kernel activities
+personal-data: true
+description: |
+  Record actions on files via the Kernel REST API.
+
+  Limitations:
+
+  1. This only records kernel actions that happen explicitly via the notebook
+     server's REST API.
+  2. Events are only recorded when an action succeeds.
+type: object
+required:
+  - action
+  - id
+properties:
+  action:
+    enum:
+      - get
+      - start
+      - restart
+      - interrupt
+      - kill
+    category: unrestricted
+    description: |
+      Action performed by the Kernel API.
+
+      This is a required field.
+
+      Possible values:
+
+      1. get
+         Get kernel information.
+
+      2. start
+         Start a kernel.
+
+      3. restart
+         Restart a kernel.
+
+      4. interrupt
+         Interrupt a kernel.
+
+      5. kill
+         Kill a kernel and delete the kernel UUID
+  id:
+    category: unrestricted
+    type: string
+    description: |
+      The kernel UUID.
+
+      This is a required field.

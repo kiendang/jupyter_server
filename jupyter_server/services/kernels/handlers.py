@@ -17,7 +17,12 @@ from tornado.ioloop import IOLoop
 from jupyter_client import protocol_version as client_protocol_version
 from jupyter_client.jsonutil import date_default
 from ipython_genutils.py3compat import cast_unicode
-from jupyter_server.utils import url_path_join, url_escape, ensure_async
+from jupyter_server.utils import (
+    url_path_join,
+    url_escape,
+    ensure_async,
+    eventlogging_schema_fqn
+)
 
 from ...base.handlers import APIHandler
 from ...base.zmqhandlers import AuthenticatedZMQStreamHandler, deserialize_binary_message
@@ -49,6 +54,11 @@ class MainKernelHandler(APIHandler):
         location = url_path_join(self.base_url, 'api', 'kernels', url_escape(kernel_id))
         self.set_header('Location', location)
         self.set_status(201)
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('kernel-actions'),
+            1,
+            { 'action': 'start', 'id': kernel_id }
+        )
         self.finish(json.dumps(model, default=date_default))
 
 
@@ -58,6 +68,11 @@ class KernelHandler(APIHandler):
     async def get(self, kernel_id):
         km = self.kernel_manager
         model = await ensure_async(km.kernel_model(kernel_id))
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('kernel-actions'),
+            1,
+            { 'action': 'get', 'id': kernel_id }
+        )
         self.finish(json.dumps(model, default=date_default))
 
     @web.authenticated
@@ -65,6 +80,11 @@ class KernelHandler(APIHandler):
         km = self.kernel_manager
         await ensure_async(km.shutdown_kernel(kernel_id))
         self.set_status(204)
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('kernel-actions'),
+            1,
+            { 'action': 'kill', 'id': kernel_id }
+        )
         self.finish()
 
 
@@ -76,6 +96,11 @@ class KernelActionHandler(APIHandler):
         if action == 'interrupt':
             await ensure_async(km.interrupt_kernel(kernel_id))
             self.set_status(204)
+            self.eventlog.record_event(
+                eventlogging_schema_fqn('kernel-actions'),
+                1,
+                { 'action': action, 'id': kernel_id }
+            )
         if action == 'restart':
 
             try:
@@ -86,6 +111,11 @@ class KernelActionHandler(APIHandler):
             else:
                 model = await ensure_async(km.kernel_model(kernel_id))
                 self.write(json.dumps(model, default=date_default))
+                self.eventlog.record_event(
+                    eventlogging_schema_fqn('kernel-actions'),
+                    1,
+                    { 'action': action, 'id': kernel_id }
+                )
         self.finish()
 
 
