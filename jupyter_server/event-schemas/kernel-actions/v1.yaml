@@ -45,7 +45,7 @@ properties:
       5. kill
          Kill a kernel and delete the kernel UUID
   id:
-    category: unrestricted
+    category: personally-identifiable-information
     type: string
     description: |
       The kernel UUID.

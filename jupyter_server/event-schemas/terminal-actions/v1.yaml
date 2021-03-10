@@ -37,7 +37,7 @@ properties:
       5. kill
          Shutdown a terminal session.
   id:
-    category: unrestricted
+    category: personally-identifiable-information
     type: string
     description: |
       The terminal id.
