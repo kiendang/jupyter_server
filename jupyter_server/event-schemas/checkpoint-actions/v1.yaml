@@ -1,0 +1,53 @@
+"$id": eventlogging.jupyter.org/jupyter_server/checkpoint-actions
+version: 1
+title: Checkpoint activities
+personal-data: true
+description: |
+  Record actions on checkpoints via the ContentsManager REST API.
+
+  Limitations:
+
+  1. This only records checkpoint actions that happen explicitly via the
+     notebook server's REST API.
+  2. Events are only recorded when an action succeeds.
+type: object
+required:
+  - action
+  - path
+  - id
+properties:
+  action:
+    enum:
+      - create
+      - restore
+      - delete
+    category: unrestricted
+    description: |
+      Action performed by the Checkpoint API.
+
+      This is a required field.
+
+      Possible values:
+
+      1. create
+         Create a new checkpoint for the file.
+
+      2. restore
+         Restore the file to a specific checkpoint.
+
+      5. delete
+         Delete a specific checkpoint of a file.
+  path:
+    category: personally-identifiable-information
+    type: string
+    description: |
+      Logical path on which the operation was performed.
+
+      This is a required field.
+  id:
+    category: personally-identifiable-information
+    type: string
+    description: |
+      The checkpoint id.
+
+      This is a required field.

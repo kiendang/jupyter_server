@@ -297,6 +297,15 @@ class CheckpointsHandler(APIHandler):
             url_escape(path), 'checkpoints', url_escape(checkpoint['id']))
         self.set_header('Location', location)
         self.set_status(201)
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('checkpoint-actions'),
+            1,
+            {
+                'action': 'create',
+                'path': path.lstrip(os.path.sep),
+                'id': checkpoint['id']
+            }
+        )
         self.finish(data)
 
 
@@ -308,6 +317,15 @@ class ModifyCheckpointsHandler(APIHandler):
         cm = self.contents_manager
         await ensure_async(cm.restore_checkpoint(checkpoint_id, path))
         self.set_status(204)
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('checkpoint-actions'),
+            1,
+            {
+                'action': 'restore',
+                'path': path.lstrip(os.path.sep),
+                'id': checkpoint_id
+            }
+        )
         self.finish()
 
     @web.authenticated
@@ -316,6 +334,15 @@ class ModifyCheckpointsHandler(APIHandler):
         cm = self.contents_manager
         await ensure_async(cm.delete_checkpoint(checkpoint_id, path))
         self.set_status(204)
+        self.eventlog.record_event(
+            eventlogging_schema_fqn('checkpoint-actions'),
+            1,
+            {
+                'action': 'delete',
+                'path': path.lstrip(os.path.sep),
+                'id': checkpoint_id
+            }
+        )
         self.finish()
 
 
