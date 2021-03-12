@@ -1,0 +1,102 @@
+"$id": eventlogging.jupyter.org/jupyter_server/session-actions
+version: 1
+title: Session activities
+personal-data: true
+description: |
+  Record actions on sessions via the Session REST API.
+
+  Limitations:
+
+  1. This only records session actions that happen explicitly via the
+     notebook server's REST API.
+  2. Events are only recorded when an action succeeds.
+type: object
+required:
+  - action
+  - requester
+  - session
+properties:
+  action:
+    enum:
+      - get
+      - create
+      - modify
+      - delete
+    category: unrestricted
+    description: |
+      Action performed by the Session API.
+
+      This is a required field.
+
+      Possible values:
+
+      1. get
+         Get information about a specific session.
+
+      2. create
+         Create a new session.
+
+      3. modify
+         Modify a session.
+
+      4. delete
+         Delete a specific session
+  requester:
+    category: personally-identifiable-information
+    type: string
+    description: |
+      The user who performed the action.
+
+      This is a required field.
+  session:
+    category: unrestricted
+    type: object
+    description: |
+      Information about the session.
+
+      This is a required field
+    properties:
+      id:
+        category: personally-identifiable-information
+        type: string
+        description: uuid of the session
+      path:
+        category: personally-identifiable-information
+        type: string
+        description: the path for the session
+      name:
+        category: personally-identifiable-information
+        type: string
+        description: the name of the session
+      type:
+        type: string
+        description: the type of the session
+      kernel:
+        category: personally-identifiable-information
+        type: string
+        description: uuid for the kernel associated with the session
+  prior_state:
+    category: unrestricted
+    type: object
+    description: |
+      Information about the session prior to modification.
+    properties:
+      id:
+        category: personally-identifiable-information
+        type: string
+        description: uuid of the session
+      path:
+        category: personally-identifiable-information
+        type: string
+        description: the path for the session
+      name:
+        category: personally-identifiable-information
+        type: string
+        description: the name of the session
+      type:
+        type: string
+        description: the type of the session
+      kernel:
+        category: personally-identifiable-information
+        type: string
+        description: uuid for the kernel associated with the session
